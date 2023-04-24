@@ -1,0 +1,20 @@
+# ecr repos for each of the services
+# 1. notes service
+# 2. auth service
+# 3. search service
+
+AWSTemplateFormatVersion: "2010-09-09"
+Description: ECR repos for each of the services
+Resources:
+  NotesServiceECR:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Sub ${AWS::StackName}-notes-service
+  AuthServiceECR:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Sub ${AWS::StackName}-auth-service
+  SearchServiceECR:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Sub ${AWS::StackName}-search-service
