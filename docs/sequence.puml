@@ -1,0 +1,134 @@
+@startuml
+
+participant "user" as U
+participant "notes-service" as notes
+participant "auth-service" as auth
+participant "aws-cognito(AWS)" as cognito
+participant "aws-dynamodb(AWS)" as dynamodb
+
+
+=== Auth Service ==
+== sign-up ==
+U -> auth: POST /api/sign-up
+note right of U: {email, pass}
+
+auth -> cognito: sign-up
+cognito -> auth: 200 OK
+
+auth -> U: 200 OK
+
+== verfication ==
+U -> auth: POST /api/verify
+note right of U: {email, code}
+
+auth -> cognito: verify
+cognito -> auth: 200 OK
+
+auth -> U: 200 OK
+
+== sign-in ==
+U -> auth: POST /api/sign-in
+note right of U: {email, pass}
+
+auth -> cognito: sign-in
+cognito -> auth: 200 OK
+note left of cognito: {token}
+
+auth -> U: 200 OK
+note left of auth: {token}
+
+=== Notes Service ==
+== create note ==
+U -> notes: POST /api/notes
+note right of U: {token, note}
+
+notes -> auth: POST /api/verify
+note right of notes: {token}
+auth -> cognito: verify
+note right of auth: {token}
+cognito -> auth: 200 OK
+note left of cognito: {email, userId}
+
+auth -> notes: 200 OK
+
+notes -> dynamodb: create note
+note right of notes
+{partitionKey:userID,
+sortKey:noteCreateTime, 
+note:{createTime,title,content}}
+endnote
+dynamodb -> notes: 200 OK
+
+notes -> U: 200 OK
+
+== get notes ==
+U -> notes: GET /api/notes
+note right of U: {token}
+
+notes -> auth: POST /api/verify
+note right of notes: {token}
+auth -> cognito: verify
+note right of auth: {token}
+cognito -> auth: 200 OK
+note left of cognito: {email, userId}
+
+auth -> notes: 200 OK
+
+notes -> dynamodb: get notes
+note right of notes
+{partitionKey:userID}
+endnote
+
+dynamodb -> notes: 200 OK
+note left of dynamodb: {notes}
+
+notes -> U: 200 OK
+note left of notes: {notes}
+
+
+== update note ==
+U -> notes: PUT /api/notes
+note right of U: {token, note}
+
+notes -> auth: POST /api/verify
+note right of notes: {token}
+auth -> cognito: verify
+note right of auth: {token}
+cognito -> auth: 200 OK
+note left of cognito: {email, userId}
+
+auth -> notes: 200 OK
+
+notes -> dynamodb: update note
+note right of notes
+{partitionKey:userID,
+sortKey:noteCreateTime,
+note:{createTime,title,content}}
+endnote
+dynamodb -> notes: 200 OK
+
+notes -> U: 200 OK
+
+== delete note ==
+U -> notes: DELETE /api/notes
+note right of U: {token, note}
+
+notes -> auth: POST /api/verify
+note right of notes: {token}
+auth -> cognito: verify
+note right of auth: {token}
+cognito -> auth: 200 OK
+note left of cognito: {email, userId}
+
+auth -> notes: 200 OK
+
+notes -> dynamodb: delete note
+note right of notes
+{partitionKey:userID,
+sortKey:noteCreateTime}
+endnote
+dynamodb -> notes: 200 OK
+
+notes -> U: 200 OK
+
+@enduml
