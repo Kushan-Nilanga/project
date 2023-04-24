@@ -82,6 +82,7 @@ Resources:
       Source:
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
+      # TODO buildspec.yml
 
   # this is the role that the codebuild project will assume
   BuildRole:
@@ -170,5 +171,3 @@ Resources:
                 Action:
                   - ecr:*
                 Resource: "*"
-# TODO
-# use ssm param store for github token
