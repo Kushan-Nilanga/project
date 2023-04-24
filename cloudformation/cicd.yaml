@@ -124,6 +124,10 @@ Resources:
                 Action:
                   - ecr:*
                 Resource: "*"
+              - Effect: Allow
+                Action:
+                  - logs:*
+                Resource: "*"
 
   # this is the role that the pipeline will assume
   PipelineRole:
@@ -166,3 +170,5 @@ Resources:
                 Action:
                   - ecr:*
                 Resource: "*"
+# TODO
+# use ssm param store for github token
