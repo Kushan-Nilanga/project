@@ -6,6 +6,8 @@ phases:
       - echo $AWS_ACCOUNT_ID
       - echo $ECR_REGION
       - echo $ECR_IMAGE
+      - docker --version
+      - 
 
       # Login to Amazon ECR
       - echo Logging in to Amazon ECR...
@@ -18,10 +20,10 @@ phases:
       - echo Building the Docker image... 
 
       # Build the Docker image
-      - docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com/$ECR_IMAGE:latest .
+      - $(docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com/$ECR_IMAGE:latest .)
 
       # Tag the Docker image with the ECR repository URI
-      - docker tag $AWS_ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com/$ECR_IMAGE:latest $AWS_ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com/$ECR_IMAGE:latest
+      - $(docker tag $AWS_ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com/$ECR_IMAGE:latest $AWS_ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com/$ECR_IMAGE:latest)
 
   post_build:
     commands:
@@ -29,4 +31,4 @@ phases:
       - echo Pushing the Docker image...
 
       # Push the Docker image to Amazon ECR
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com/$ECR_IMAGE:latest
+      - $(docker push $AWS_ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com/$ECR_IMAGE:latest)
