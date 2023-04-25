@@ -10,7 +10,7 @@ phases:
 
       # Login to Amazon ECR
       - echo Logging in to Amazon ECR...
-      - aws ecr get-login --region $AWS_REGION --no-include-email
+      - $(aws ecr get-login --region $AWS_REGION --no-include-email)
 
   build:
     commands:
