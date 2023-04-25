@@ -1,11 +1,5 @@
 version: 0.2
 
-env:
-  variables:
-    ECR_REGION: !Ref EcrRegion
-    ECR_IMAGE: !Ref EcrImage
-    AWS_ACCOUNT_ID: !Ref AWS::AccountId
-
 phases:
   pre_build:
     commands:
