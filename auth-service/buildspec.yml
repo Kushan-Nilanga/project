@@ -9,7 +9,8 @@ phases:
 
       # Login to Amazon ECR
       - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region $ECR_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com
+      # - aws ecr get-login-password --region $ECR_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com
+      - $(aws ecr get-login --region $ECR_REGION --no-include-email)
 
   build:
     commands:
