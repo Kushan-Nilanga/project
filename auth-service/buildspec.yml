@@ -17,9 +17,11 @@ phases:
       - echo Build started on `date`
       - echo Building the Docker image... 
       - $(cd $SOURCE_DIR)
+      - $(ls -la)
 
       # Build the Docker image
-      - $(docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com/$ECR_IMAGE:latest .)
+      # - $(docker build -t 329045634983.dkr.ecr.ap-southeast-2.amazonaws.com/notes-stack-cicd-auth-service:latest .)
+      - docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com/$ECR_IMAGE:latest .
 
       # Tag the Docker image with the ECR repository URI
       - $(docker tag $AWS_ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com/$ECR_IMAGE:latest $AWS_ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com/$ECR_IMAGE:latest)
