@@ -138,7 +138,7 @@ Resources:
   #     Source:
   #       Type: CODEPIPELINE
   #       BuildSpec: /infrastructure/buildspec.yml
-  #     TimeoutInMinutes: 10
+  #     TimeoutInMinutes: 15
 
   # this is the codebuild project for auth-service
   BuildProjectAuthService:
@@ -163,7 +163,7 @@ Resources:
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE
-      TimeoutInMinutes: 10
+      TimeoutInMinutes: 15
 
   # this the ecr repository for auth-service
   EcrRepositoryAuthService:
@@ -194,7 +194,7 @@ Resources:
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE
-      TimeoutInMinutes: 10
+      TimeoutInMinutes: 15
 
   # this the ecr repository for bff-service
   EcrRepositoryBffService:
@@ -225,7 +225,7 @@ Resources:
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE
-      TimeoutInMinutes: 10
+      TimeoutInMinutes: 15
 
   # this is the codebuild project for logs-service
   BuildProjectLogsService:
@@ -250,7 +250,7 @@ Resources:
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE
-      TimeoutInMinutes: 10
+      TimeoutInMinutes: 15
 
   # this the ecr repository for notes-service
   EcrRepositoryNotesService:
