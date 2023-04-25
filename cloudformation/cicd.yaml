@@ -163,8 +163,13 @@ Resources:
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE
-        BuildSpec: ./auth-service/buildspec.yml
       TimeoutInMinutes: 10
+
+  # this the ecr repository for auth-service
+  EcrRepositoryAuthService:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: auth-service
 
   # this is the codebuild project for bff-service
   BuildProjectBffService:
@@ -177,11 +182,25 @@ Resources:
         ComputeType: BUILD_GENERAL1_SMALL
         Image: aws/codebuild/docker:18.09.0
         Type: LINUX_CONTAINER
+        EnvironmentVariables:
+          - Name: ECR_URI
+            Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com
+          - Name: SERVICE_NAME
+            Value: bff-service
+          - Name: AWS_ACCOUNT_ID
+            Value: !Ref AWS::AccountId
+          - Name: AWS_REGION
+            Value: !Ref AWS::Region
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE
-        BuildSpec: ./bff-service/buildspec.yml
       TimeoutInMinutes: 10
+
+  # this the ecr repository for bff-service
+  EcrRepositoryBffService:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: bff-service
 
   # this is the codebuild project for notes-service
   BuildProjectNotesService:
@@ -194,10 +213,18 @@ Resources:
         ComputeType: BUILD_GENERAL1_SMALL
         Image: aws/codebuild/docker:18.09.0
         Type: LINUX_CONTAINER
+        EnvironmentVariables:
+          - Name: ECR_URI
+            Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com
+          - Name: SERVICE_NAME
+            Value: notes-service
+          - Name: AWS_ACCOUNT_ID
+            Value: !Ref AWS::AccountId
+          - Name: AWS_REGION
+            Value: !Ref AWS::Region
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE
-        BuildSpec: ./notes-service/buildspec.yml
       TimeoutInMinutes: 10
 
   # this is the codebuild project for logs-service
@@ -211,11 +238,25 @@ Resources:
         ComputeType: BUILD_GENERAL1_SMALL
         Image: aws/codebuild/docker:18.09.0
         Type: LINUX_CONTAINER
+        EnvironmentVariables:
+          - Name: ECR_URI
+            Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com
+          - Name: SERVICE_NAME
+            Value: logs-service
+          - Name: AWS_ACCOUNT_ID
+            Value: !Ref AWS::AccountId
+          - Name: AWS_REGION
+            Value: !Ref AWS::Region
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE
-        BuildSpec: ./logs-service/buildspec.yml
       TimeoutInMinutes: 10
+
+  # this the ecr repository for notes-service
+  EcrRepositoryNotesService:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: notes-service
 
   # this is the role that the codebuild project will assume
   BuildRole:
