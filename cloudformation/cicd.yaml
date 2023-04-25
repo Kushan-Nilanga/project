@@ -227,6 +227,12 @@ Resources:
         Type: CODEPIPELINE
       TimeoutInMinutes: 15
 
+  # this the ecr repository for notes-service
+  EcrRepositoryNotesService:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: notes-service
+
   # this is the codebuild project for logs-service
   BuildProjectLogsService:
     Type: AWS::CodeBuild::Project
@@ -252,11 +258,11 @@ Resources:
         Type: CODEPIPELINE
       TimeoutInMinutes: 15
 
-  # this the ecr repository for notes-service
-  EcrRepositoryNotesService:
+  # this the ecr repository for logs-service
+  EcrRepositoryLogsService:
     Type: AWS::ECR::Repository
     Properties:
-      RepositoryName: notes-service
+      RepositoryName: logs-service
 
   # this is the role that the codebuild project will assume
   BuildRole:

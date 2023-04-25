@@ -10,7 +10,7 @@ phases:
 
       # Login to Amazon ECR
       - echo Logging in to Amazon ECR...
-      - $(aws ecr get-login --region $AWS_REGION --no-include-email)
+      - aws ecr get-login --region $AWS_REGION --no-include-email
 
   build:
     commands:
@@ -22,7 +22,7 @@ phases:
       - docker build -t $ECR_URI/$SERVICE_NAME:latest -f ./$SERVICE_NAME/Dockerfile .
 
       # Tag the Docker image with the ECR repository URI
-      - $(docker tag $ECR_URI/$SERVICE_NAME:latest $ECR_URI/$SERVICE_NAME:latest)
+      - docker tag $ECR_URI/$SERVICE_NAME:latest $ECR_URI/$SERVICE_NAME:latest
 
   post_build:
     commands:
