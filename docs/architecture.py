@@ -1,61 +1,93 @@
 from diagrams import Cluster, Diagram, Edge
 
-from diagrams.aws.compute import ElasticKubernetesService as Eks
+from diagrams.onprem.vcs import Github
+from diagrams.aws.compute import EKS
 from diagrams.aws.compute import EC2ContainerRegistry as Ecr
 from diagrams.k8s.compute import Pod
 from diagrams.aws.database import Dynamodb
 from diagrams.aws.security import Cognito
 from diagrams.aws.network import APIGateway
-from diagrams.aws.devtools import Codebuild
-from diagrams.aws.devtools import Codepipeline
+from diagrams.aws.devtools import Codebuild, Codepipeline
 from diagrams.aws.general import Client
 from diagrams.aws.management import Cloudwatch
+from diagrams.aws.storage import S3
+from diagrams.aws.network import ELB
 
-with Diagram("Architecture", filename="architecture", show=False):
-    user = Client("User")
+node_attr = {
+    "fontcolor": "black",
+    "fontname": "Helvetica",
+    "fontsize": "10",
+    "shape": "rect",
+    "width": "1.1",
+}
 
-        
-    with Cluster("AWS (ap-southeast-2)"):
-        # compute
-        registry = Ecr("Registry")
+edge_attr = {
+    "color": "black"
+}
 
-        # database
-        database = Dynamodb("Database")
-        user_pool = Cognito("User Pool")
+graph_attr = {
+    "layout": "dot",
+    "compound": "true",
+    "rankdir": "LR",
+    "splines": "ortho",
+    "nodesep": "0.6",
+    "ranksep": "1.5",
+    "pad": "0.5",
+}
 
-        # users
-        api = APIGateway("API Gateway")
+with Diagram("Architecture",
+             filename="architecture",
+             node_attr=node_attr,
+             edge_attr=edge_attr,
+             graph_attr=graph_attr,
+             ):
+    with Cluster("Internet"):
+        github = Github("Github Repository")
+        user = Client("User")
+        developer = Client("Developer")
 
-        # ci/cd
-        build = Codebuild("Build")
-        pipeline = Codepipeline("Pipeline")
+        with Cluster("AWS (ap-southeast-2)"):
 
-        # logging and monitoring
-        cloudwatch = Cloudwatch("Cloudwatch")
+            with Cluster("AWS PaaS Services"):
+                with Cluster("Datastore"):
+                    database = Dynamodb("Database")
+                    user_pool = Cognito("User Pool")
 
-        with Cluster("EKS Cluster Namespace") as compute:
-            kube = Eks("EKS Cluster")
-            nginx = Pod("Nginx")
-            notes_service = Pod("Notes Service")
-            auth_service = Pod("Auth Service")
-            frontend_service = Pod("Frontend Service")
+                with Cluster("CI/CD"):
+                    build = Codebuild("Build")
+                    pipeline = Codepipeline("Pipeline")
+                    artifacts = S3("Artifacts")
+                    registry = Ecr("Registry")
 
-        kube >> Edge(label="HTTP") >> cloudwatch
+                with Cluster("Monitoring"):
+                    cloudwatch = Cloudwatch("Cloudwatch")
 
-        api >> Edge(label="HTTP") >> nginx
-        nginx >> Edge(label="HTTPS") >> [notes_service, auth_service, frontend_service]
+            with Cluster("Compute"):
+                api = APIGateway("API Gateway")
+                lb = ELB("Load Balancer")
 
-        notes_service >> Edge(label="HTTP") >> database
-        auth_service >> Edge(label="HTTP") >> user_pool
+                with Cluster("EKS Cluster Namespace") as eks:
+                    notes_service = Pod("Notes Service")
+                    auth_service = Pod("Auth Service")
+                    frontend_service = Pod("Frontend Service")
+                    logs_service = Pod("Logs Service")
 
-        # ci/cd
-        pipeline >> Edge(label="Docker Image") >> build
-        build >> Edge(label="Docker Image") >> registry
+            lb >> Edge(lhead="cluster_EKS Cluster Namespace",
+                       xlabel="http") >> notes_service
+            notes_service >> Edge(
+                lhead="cluster_EKS Cluster Namespace", xlabel="http") >> registry
 
-        # ci/cd
-        pipeline >> Edge(label="Kubernetes Manifest") >> kube
-        kube >> registry
-    
-    user >> Edge(label="HTTP") >> api
+            notes_service >> Edge(xlabel="http") >> database
+            auth_service >> Edge(xlabel="http") >> user_pool
+            logs_service >> Edge(xlabel="http") >> cloudwatch
+            api >> Edge(xlabel="http") >> lb
 
+            # ci/cd
+            pipeline >> Edge(xlabel="http") >> build
+            build >> Edge(xlabel="http") >> registry
+            pipeline >> Edge(xlabel="http") >> github
+            build >> Edge(xlabel="http") >> cloudwatch
+            build >> Edge(xlabel="http") >> artifacts
 
+        user >> Edge(xlabel="http") >> api
+        developer >> Edge(xlabel="http") >> github

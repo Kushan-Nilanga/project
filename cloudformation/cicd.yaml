@@ -50,28 +50,101 @@ Resources:
               OutputArtifacts:
                 - Name: SourceOutput
               RunOrder: 1
-        # building the docker image
-        - Name: Build
+        # TODO: building infrastructure
+        # building the docker images and pusing to ECR
+        - Name: BuildCode
           Actions:
-            - Name: BuildAction
+            - Name: BuildAuthService
               ActionTypeId:
                 Category: Build
                 Owner: AWS
                 Version: 1
                 Provider: CodeBuild
               Configuration:
-                ProjectName: !Ref BuildProject
+                ProjectName: !Ref BuildProjectAuthService
               InputArtifacts:
                 - Name: SourceOutput
               OutputArtifacts:
-                - Name: BuildOutput
+                - Name: BuildOutputAuthService
+              RunOrder: 1
+            - Name: BuildBffService
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref BuildProjectBffService
+              InputArtifacts:
+                - Name: SourceOutput
+              OutputArtifacts:
+                - Name: BuildOutputBffService
+              RunOrder: 1
+            - Name: BuildNotesService
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref BuildProjectNotesService
+              InputArtifacts:
+                - Name: SourceOutput
+              OutputArtifacts:
+                - Name: BuildOutputNotesService
+              RunOrder: 1
+            - Name: BuildLogsService
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref BuildProjectLogsService
+              InputArtifacts:
+                - Name: SourceOutput
+              OutputArtifacts:
+                - Name: BuildOutputLogsService
               RunOrder: 1
 
-  # this is the codebuild project
-  BuildProject:
+        # - Name: BuildInfra
+        #   Actions:
+        #     - Name: BuildInfra
+        #       ActionTypeId:
+        #         Category: Build
+        #         Owner: AWS
+        #         Version: 1
+        #         Provider: CodeBuild
+        #       Configuration:
+        #         ProjectName: !Ref BuildProjectInfra
+        #       InputArtifacts:
+        #         - Name: SourceOutput
+        #       OutputArtifacts:
+        #         - Name: BuildOutputInfra
+        #       RunOrder: 1
+  
+  # this is the codebuild project for infrastructure
+  # BuildProjectInfra:
+  #   Type: AWS::CodeBuild::Project
+  #   Properties:
+  #     Name: !Sub ${AWS::StackName}-build-infra
+  #     Artifacts:
+  #       Type: CODEPIPELINE
+  #     Environment:
+  #       ComputeType: BUILD_GENERAL1_SMALL
+  #       Image: aws/codebuild/docker:18.09.0
+  #       Type: LINUX_CONTAINER
+  #     ServiceRole: !GetAtt BuildRole.Arn
+  #     Source:
+  #       Type: CODEPIPELINE
+  #       BuildSpec: /infrastructure/buildspec.yml
+  #     TimeoutInMinutes: 10
+
+  # this is the codebuild project for auth-service
+  BuildProjectAuthService:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: !Sub ${AWS::StackName}-build
+      Name: !Sub ${AWS::StackName}-build-auth-service
       Artifacts:
         Type: CODEPIPELINE
       Environment:
@@ -81,8 +154,60 @@ Resources:
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE
+        BuildSpec: /auth-service/buildspec.yml
       TimeoutInMinutes: 10
-      # TODO buildspec.yml
+
+  # this is the codebuild project for bff-service
+  BuildProjectBffService:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub ${AWS::StackName}-build-bff-service
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/docker:18.09.0
+        Type: LINUX_CONTAINER
+      ServiceRole: !GetAtt BuildRole.Arn
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: /bff-service/buildspec.yml
+      TimeoutInMinutes: 10
+
+  # this is the codebuild project for notes-service
+  BuildProjectNotesService:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub ${AWS::StackName}-build-notes-service
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/docker:18.09.0
+        Type: LINUX_CONTAINER
+      ServiceRole: !GetAtt BuildRole.Arn
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: /notes-service/buildspec.yml
+      TimeoutInMinutes: 10
+
+  # this is the codebuild project for logs-service
+  BuildProjectLogsService:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub ${AWS::StackName}-build-logs-service
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/docker:18.09.0
+        Type: LINUX_CONTAINER
+      ServiceRole: !GetAtt BuildRole.Arn
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: /logs-service/buildspec.yml
+      TimeoutInMinutes: 10
+    
 
   # this is the role that the codebuild project will assume
   BuildRole:

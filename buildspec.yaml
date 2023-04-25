@@ -1,0 +1,7 @@
+# buildspec file to build the microservices
+# https://medium.com/@whaleberry/using-aws-codebuild-to-build-image-from-docker-file-on-bitbucket-to-ecr-e004a455dd83
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      docker: 18
