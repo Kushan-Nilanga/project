@@ -158,7 +158,7 @@ Resources:
             Value: !Sub ${AWS::StackName}-auth-service
           - Name: AWS_ACCOUNT_ID
             Value: !Ref AWS::AccountId
-          - Name: DOCKERFILE_PATH
+          - Name: DOCKERFILE
             Value: ./auth-service/Dockerfile
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
