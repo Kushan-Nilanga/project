@@ -76,14 +76,18 @@ app.post("/api/sign-in", async (req, res) => {
   }
 });
 
+app.get("/", (req, res) => {
+  res.send("Hello World from Auth Service!");
+});
+
 app.listen(3000, () => {
-  // check if the environment variables are set
-  if (!process.env.COGNITO_CLIENT_ID) {
-    throw new Error("COGNITO_CLIENT_ID is not set");
-  }
-  if (!process.env.COGNITO_USER_POOL_ID) {
-    throw new Error("COGNITO_USER_POOL_ID is not set");
-  }
+  // // check if the environment variables are set
+  // if (!process.env.COGNITO_CLIENT_ID) {
+  //   throw new Error("COGNITO_CLIENT_ID is not set");
+  // }
+  // if (!process.env.COGNITO_USER_POOL_ID) {
+  //   throw new Error("COGNITO_USER_POOL_ID is not set");
+  // }
 
   console.log("Auth service listening on port 3000");
 });
