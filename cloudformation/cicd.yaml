@@ -154,7 +154,7 @@ Resources:
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE
-        BuildSpec: /auth-service/buildspec.yml
+        BuildSpec: ./auth-service/buildspec.yml
       TimeoutInMinutes: 10
 
   # this is the codebuild project for bff-service
@@ -171,7 +171,7 @@ Resources:
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE
-        BuildSpec: /bff-service/buildspec.yml
+        BuildSpec: ./bff-service/buildspec.yml
       TimeoutInMinutes: 10
 
   # this is the codebuild project for notes-service
@@ -188,7 +188,7 @@ Resources:
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE
-        BuildSpec: /notes-service/buildspec.yml
+        BuildSpec: ./notes-service/buildspec.yml
       TimeoutInMinutes: 10
 
   # this is the codebuild project for logs-service
@@ -205,7 +205,7 @@ Resources:
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE
-        BuildSpec: /logs-service/buildspec.yml
+        BuildSpec: ./logs-service/buildspec.yml
       TimeoutInMinutes: 10
     
 
