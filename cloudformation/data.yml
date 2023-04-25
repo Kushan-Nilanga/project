@@ -1,0 +1,41 @@
+# cloudformation to create dynamodb table for notes
+# has a schema of
+# 1. ownerid (string) - primary key,
+# 2. created_at (string) - timestamp, sort key
+# 3. title (string),
+# 4. content (string)
+# 5. updated_at (string) - timestamp
+
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "DynamoDB table for notes"
+
+Parameters:
+  TableName:
+    Type: String
+    Description: Name of the DynamoDB table
+    Default: notes-table
+
+Resources:
+  NotesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref TableName
+      AttributeDefinitions:
+        - AttributeName: userid
+          AttributeType: S
+        - AttributeName: created
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userid
+          KeyType: HASH
+        - AttributeName: created
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+
+# output the table name
+Outputs:
+  TableName:
+    Value: !Ref NotesTable
+    Description: Name of the DynamoDB table

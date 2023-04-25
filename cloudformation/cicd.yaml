@@ -33,6 +33,7 @@ Resources:
         Location: !Ref ArtifactBucket
       RoleArn: !GetAtt PipelineRole.Arn
       Stages:
+        # ===== SOURCE PHASE =====
         # sourcing resources from github
         - Name: Source
           Actions:
@@ -50,8 +51,8 @@ Resources:
               OutputArtifacts:
                 - Name: SourceOutput
               RunOrder: 1
-        # TODO: building infrastructure
-        # building the docker images and pusing to ECR
+
+        # ===== SERVICE BUILD PHASE =====
         - Name: BuildCode
           Actions:
             - Name: BuildAuthService
@@ -107,39 +108,11 @@ Resources:
                 - Name: BuildOutputLogsService
               RunOrder: 1
 
-        # - Name: BuildInfra
-        #   Actions:
-        #     - Name: BuildInfra
-        #       ActionTypeId:
-        #         Category: Build
-        #         Owner: AWS
-        #         Version: 1
-        #         Provider: CodeBuild
-        #       Configuration:
-        #         ProjectName: !Ref BuildProjectInfra
-        #       InputArtifacts:
-        #         - Name: SourceOutput
-        #       OutputArtifacts:
-        #         - Name: BuildOutputInfra
-        #       RunOrder: 1
+        # ==== INFRA BUILD PHASE ====
+        - Name: BuildInfra
+          Actions:
 
-  # this is the codebuild project for infrastructure
-  # BuildProjectInfra:
-  #   Type: AWS::CodeBuild::Project
-  #   Properties:
-  #     Name: !Sub ${AWS::StackName}-build-infra
-  #     Artifacts:
-  #       Type: CODEPIPELINE
-  #     Environment:
-  #       ComputeType: BUILD_GENERAL1_SMALL
-  #       Image: aws/codebuild/docker:18.09.0
-  #       Type: LINUX_CONTAINER
-  #     ServiceRole: !GetAtt BuildRole.Arn
-  #     Source:
-  #       Type: CODEPIPELINE
-  #       BuildSpec: /infrastructure/buildspec.yml
-  #     TimeoutInMinutes: 15
-
+  # ======== SERVICE BUILD PROJECTS ========
   # this is the codebuild project for auth-service
   BuildProjectAuthService:
     Type: AWS::CodeBuild::Project
@@ -163,7 +136,7 @@ Resources:
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE
-      TimeoutInMinutes: 15
+      TimeoutInMinutes: 5
 
   # this the ecr repository for auth-service
   EcrRepositoryAuthService:
@@ -194,7 +167,7 @@ Resources:
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE
-      TimeoutInMinutes: 15
+      TimeoutInMinutes: 5
 
   # this the ecr repository for bff-service
   EcrRepositoryBffService:
@@ -225,7 +198,7 @@ Resources:
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE
-      TimeoutInMinutes: 15
+      TimeoutInMinutes: 5
 
   # this the ecr repository for notes-service
   EcrRepositoryNotesService:
@@ -256,7 +229,7 @@ Resources:
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE
-      TimeoutInMinutes: 15
+      TimeoutInMinutes: 5
 
   # this the ecr repository for logs-service
   EcrRepositoryLogsService:
@@ -264,6 +237,36 @@ Resources:
     Properties:
       RepositoryName: logs-service
 
+  # ======== INFRA BUILD PROJECTS ========
+  # this is the codebuild project for data layer
+  BuildProjectDataLayer:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub ${AWS::StackName}-build-data-layer
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/docker:18.09.0
+        Type: LINUX_CONTAINER
+        EnvironmentVariables:
+          - Name: CF_STACK_NAME
+            Value: !Sub ${AWS::StackName}-data-layer
+          - Name: CF_TEMPLATE_FILE
+            Value: ./cloudformation/data.yml
+          - Name: CF_PARAMETERS
+            Value: !Sub TableName=${AWS::StackName}-notes
+          - Name: AWS_ACCOUNT_ID
+            Value: !Ref AWS::AccountId
+          - Name: AWS_REGION
+            Value: !Ref AWS::Region
+      ServiceRole: !GetAtt BuildRole.Arn
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: ./cloudformation/buildspec.yml
+      TimeoutInMinutes: 5
+
+  # ======== IAM ROLES ========
   # this is the role that the codebuild project will assume
   BuildRole:
     Type: AWS::IAM::Role
@@ -308,6 +311,10 @@ Resources:
               - Effect: Allow
                 Action:
                   - logs:*
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - cloudformation:*
                 Resource: "*"
 
   # this is the role that the pipeline will assume
