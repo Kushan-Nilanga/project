@@ -329,6 +329,10 @@ Resources:
                 Action:
                   - cloudformation:*
                 Resource: "*"
+              - Effect: Allow
+                Action:
+                  - dynamodb:*
+                Resource: "*"
 
   # this is the role that the pipeline will assume
   PipelineRole:
