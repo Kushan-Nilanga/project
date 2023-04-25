@@ -111,6 +111,19 @@ Resources:
         # ==== INFRA BUILD PHASE ====
         - Name: BuildInfra
           Actions:
+            - Name: BuildProjectDataLayer
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref BuildProjectDataLayer
+              InputArtifacts:
+                - Name: SourceOutput
+              OutputArtifacts:
+                - Name: BuildOutputInfraDataLayer
+              RunOrder: 1
 
   # ======== SERVICE BUILD PROJECTS ========
   # this is the codebuild project for auth-service
