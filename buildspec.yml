@@ -29,5 +29,8 @@ phases:
       - echo Build completed on `date`
       - echo Pushing the Docker image...
 
+      - echo $ECR_URI
+      - echo $SERVICE_NAME
+
       # Push the Docker image to Amazon ECR
       - $(docker push $ECR_URI/$SERVICE_NAME:latest)
