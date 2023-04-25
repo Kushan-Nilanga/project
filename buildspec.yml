@@ -33,4 +33,4 @@ phases:
       - echo $SERVICE_NAME
 
       # Push the Docker image to Amazon ECR
-      - $(docker push $ECR_URI/$SERVICE_NAME:latest)
+      - docker push $ECR_URI/$SERVICE_NAME:latest
