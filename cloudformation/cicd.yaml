@@ -385,6 +385,9 @@ Resources:
                 Action:
                   - eks:*
                 Resource: "*"
+              - Effect: Allow
+                Action:
+                  - ec2:*
 
   # this is the role that the pipeline will assume
   PipelineRole:
