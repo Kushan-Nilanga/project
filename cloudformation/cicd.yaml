@@ -95,7 +95,7 @@ Resources:
                 - Name: SourceOutput
               OutputArtifacts:
                 - Name: BuildOutputNotesService
-              RunOrder: 2
+              RunOrder: 1
 
             - Name: BuildLogsService
               ActionTypeId:
@@ -109,7 +109,7 @@ Resources:
                 - Name: SourceOutput
               OutputArtifacts:
                 - Name: BuildOutputLogsService
-              RunOrder: 2
+              RunOrder: 1
 
         # ==== INFRA BUILD PHASE ====
         - Name: BuildInfra
@@ -152,7 +152,7 @@ Resources:
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE
-      TimeoutInMinutes: 10
+      TimeoutInMinutes: 5
 
   # this the ecr repository for auth-service
   EcrRepositoryAuthService:
@@ -183,7 +183,7 @@ Resources:
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE
-      TimeoutInMinutes: 10
+      TimeoutInMinutes: 5
 
   # this the ecr repository for bff-service
   EcrRepositoryBffService:
@@ -214,7 +214,7 @@ Resources:
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE
-      TimeoutInMinutes: 10
+      TimeoutInMinutes: 5
 
   # this the ecr repository for notes-service
   EcrRepositoryNotesService:
@@ -245,7 +245,7 @@ Resources:
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE
-      TimeoutInMinutes: 10
+      TimeoutInMinutes: 5
 
   # this the ecr repository for logs-service
   EcrRepositoryLogsService:
@@ -280,7 +280,7 @@ Resources:
       Source:
         Type: CODEPIPELINE
         BuildSpec: ./cloudformation/buildspec.yml
-      TimeoutInMinutes: 10
+      TimeoutInMinutes: 5
 
   # ======== IAM ROLES ========
   # this is the role that the codebuild project will assume

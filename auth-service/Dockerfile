@@ -1,5 +1,5 @@
 # Application Dockerfile
-FROM --platform=linux/amd64 node:20-alpine
+FROM --platform=linux/amd64 329045634983.dkr.ecr.ap-southeast-2.amazonaws.com/node:latest
 WORKDIR /app
 COPY /auth-service/package*.json .
 RUN npm install
