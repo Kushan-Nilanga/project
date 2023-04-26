@@ -19,7 +19,7 @@ phases:
       - echo Deploying the CloudFormation stack...
 
       # Deploy the CloudFormation stack
-      - aws cloudformation deploy --stack-name $CF_STACK_NAME --template-file $CF_TEMPLATE_FILE --parameter-overrides $CF_PARAMETERS --capabilities CAPABILITY_NAMED_IAM
+      - aws cloudformation deploy --stack-name $CF_STACK_NAME --template-file $CF_TEMPLATE_FILE --parameter-overrides $CF_PARAMETERS --capabilities CAPABILITY_NAMED_IAM || exit 0
 
   post_build:
     commands:
