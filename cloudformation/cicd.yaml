@@ -333,6 +333,10 @@ Resources:
                 Action:
                   - dynamodb:*
                 Resource: "*"
+              - Effect: Allow
+                Action:
+                  - cognito-idp:*
+                Resource: "*"
 
   # this is the role that the pipeline will assume
   PipelineRole:
@@ -386,7 +390,7 @@ Outputs:
     Description: ECR repository for notes-service
     Value: !Ref EcrRepositoryNotesService
 
-  EcrRepositoryLogsService: 
+  EcrRepositoryLogsService:
     Description: ECR repository for logs-service
     Value: !Ref EcrRepositoryLogsService
 
