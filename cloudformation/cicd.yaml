@@ -68,6 +68,7 @@ Resources:
               OutputArtifacts:
                 - Name: BuildOutputAuthService
               RunOrder: 1
+
             - Name: BuildBffService
               ActionTypeId:
                 Category: Build
@@ -81,6 +82,7 @@ Resources:
               OutputArtifacts:
                 - Name: BuildOutputBffService
               RunOrder: 1
+
             - Name: BuildNotesService
               ActionTypeId:
                 Category: Build
@@ -93,7 +95,8 @@ Resources:
                 - Name: SourceOutput
               OutputArtifacts:
                 - Name: BuildOutputNotesService
-              RunOrder: 1
+              RunOrder: 2
+
             - Name: BuildLogsService
               ActionTypeId:
                 Category: Build
@@ -106,7 +109,7 @@ Resources:
                 - Name: SourceOutput
               OutputArtifacts:
                 - Name: BuildOutputLogsService
-              RunOrder: 1
+              RunOrder: 2
 
         # ==== INFRA BUILD PHASE ====
         - Name: BuildInfra
