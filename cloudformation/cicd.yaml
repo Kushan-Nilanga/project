@@ -388,6 +388,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - ec2:*
+                Resource: "*"
 
   # this is the role that the pipeline will assume
   PipelineRole:
