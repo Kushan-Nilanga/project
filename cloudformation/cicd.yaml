@@ -128,6 +128,20 @@ Resources:
                 - Name: BuildOutputInfraDataLayer
               RunOrder: 1
 
+            - Name: BuildProjectComputeLayer
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref BuildProjectComputeLayer
+              InputArtifacts:
+                - Name: SourceOutput
+              OutputArtifacts:
+                - Name: BuildOutputInfraComputeLayer
+              RunOrder: 1
+
   # ======== SERVICE BUILD PROJECTS ========
   # this is the codebuild project for auth-service
   BuildProjectAuthService:
@@ -282,6 +296,33 @@ Resources:
         BuildSpec: ./cloudformation/buildspec.yml
       TimeoutInMinutes: 5
 
+  BuildProjectComputeLayer:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub ${AWS::StackName}-build-compute-layer
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/docker:18.09.0
+        Type: LINUX_CONTAINER
+        EnvironmentVariables:
+          - Name: CF_STACK_NAME
+            Value: !Sub ${AWS::StackName}-compute-layer
+          - Name: CF_TEMPLATE_FILE
+            Value: ./cloudformation/compute.yml
+          - Name: CF_PARAMETERS
+            Value: !Sub TableName=${AWS::StackName}-notes
+          - Name: AWS_ACCOUNT_ID
+            Value: !Ref AWS::AccountId
+          - Name: AWS_REGION
+            Value: !Ref AWS::Region
+      ServiceRole: !GetAtt BuildRole.Arn
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: ./cloudformation/buildspec.yml
+      TimeoutInMinutes: 5
+
   # ======== IAM ROLES ========
   # this is the role that the codebuild project will assume
   BuildRole:
@@ -339,6 +380,10 @@ Resources:
               - Effect: Allow
                 Action:
                   - cognito-idp:*
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - eks:*
                 Resource: "*"
 
   # this is the role that the pipeline will assume
