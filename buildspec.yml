@@ -6,7 +6,7 @@ env:
 phases:
   pre_build:
     commands:
-      - escho $AWS_ACCOUNT_ID
+      - echo $AWS_ACCOUNT_ID
       - echo $AWS_REGION
       - echo $ECR_URI
       - echo $SERVICE_NAME
