@@ -7,7 +7,7 @@
 # 5. updated_at (string) - timestamp
 
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "DynamoDB table for notes"
+Description: "DynamoDB table for notes and Cognito for user management"
 
 Parameters:
   TableName:

@@ -375,3 +375,39 @@ Resources:
                 Action:
                   - ecr:*
                 Resource: "*"
+
+Outputs:
+  # ecr repositories
+  EcrRepositoryBffService:
+    Description: ECR repository for bff-service
+    Value: !Ref EcrRepositoryBffService
+
+  EcrRepositoryNotesService:
+    Description: ECR repository for notes-service
+    Value: !Ref EcrRepositoryNotesService
+
+  EcrRepositoryLogsService: 
+    Description: ECR repository for logs-service
+    Value: !Ref EcrRepositoryLogsService
+
+  # codepipeline
+  Pipeline:
+    Description: CodePipeline
+    Value: !Ref Pipeline
+
+  # codebuild projects
+  BuildProjectBffService:
+    Description: CodeBuild project for bff-service
+    Value: !Ref BuildProjectBffService
+
+  BuildProjectNotesService:
+    Description: CodeBuild project for notes-service
+    Value: !Ref BuildProjectNotesService
+
+  BuildProjectLogsService:
+    Description: CodeBuild project for logs-service
+    Value: !Ref BuildProjectLogsService
+
+  BuildProjectDataLayer:
+    Description: CodeBuild project for data-layer
+    Value: !Ref BuildProjectDataLayer
