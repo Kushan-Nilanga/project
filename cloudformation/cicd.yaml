@@ -382,36 +382,38 @@ Resources:
 
 Outputs:
   # ecr repositories
-  EcrRepositoryBffService:
-    Description: ECR repository for bff-service
-    Value: !Ref EcrRepositoryBffService
+  EcrRepositoryBffServiceLink:
+    Description: Link to the ECR repository for bff-service
+    Value: !Sub https://${AWS::Region}.console.aws.amazon.com/ecr/repositories/bff-service/?region=${AWS::Region}
 
-  EcrRepositoryNotesService:
-    Description: ECR repository for notes-service
-    Value: !Ref EcrRepositoryNotesService
+  EcrRepositoryNotesServiceLink:
+    Description: Link to the ECR repository for notes-service
+    Value: !Sub https://${AWS::Region}.console.aws.amazon.com/ecr/repositories/notes-service/?region=${AWS::Region}
 
-  EcrRepositoryLogsService:
-    Description: ECR repository for logs-service
-    Value: !Ref EcrRepositoryLogsService
+  EcrRepositoryLogsServiceLink:
+    Description: Link to the ECR repository for logs-service
+    Value: !Sub https://${AWS::Region}.console.aws.amazon.com/ecr/repositories/logs-service/?region=${AWS::Region}
 
-  # codepipeline
-  Pipeline:
-    Description: CodePipeline
-    Value: !Ref Pipeline
+  # codepipeline 
+  PipelineLink:
+    Description: Link to the pipeline
+    Value: !Sub https://${AWS::Region}.console.aws.amazon.com/codesuite/codepipeline/pipelines/${AWS::StackName}-pipeline/view?region=${AWS::Region}
 
   # codebuild projects
-  BuildProjectBffService:
-    Description: CodeBuild project for bff-service
-    Value: !Ref BuildProjectBffService
+  BuildProjectBffServiceLink:
+    Description: Link to the codebuild project for bff-service
+    Value: !Sub https://${AWS::Region}.console.aws.amazon.com/codesuite/codebuild/projects/${AWS::StackName}-build-bff-service/?region=${AWS::Region}
 
-  BuildProjectNotesService:
-    Description: CodeBuild project for notes-service
-    Value: !Ref BuildProjectNotesService
+  BuildProjectNotesServiceLink:
+    Description: Link to the codebuild project for notes-service
+    Value: !Sub https://${AWS::Region}.console.aws.amazon.com/codesuite/codebuild/projects/${AWS::StackName}-build-notes-service/?region=${AWS::Region}
 
-  BuildProjectLogsService:
-    Description: CodeBuild project for logs-service
-    Value: !Ref BuildProjectLogsService
+  BuildProjectLogsServiceLink:
+    Description: Link to the codebuild project for logs-service
+    Value: !Sub https://${AWS::Region}.console.aws.amazon.com/codesuite/codebuild/projects/${AWS::StackName}-build-logs-service/?region=${AWS::Region}
 
-  BuildProjectDataLayer:
-    Description: CodeBuild project for data-layer
-    Value: !Ref BuildProjectDataLayer
+  BuildProjectDataLayerLink:
+    Description: Link to the codebuild project for data-layer
+    Value: !Sub https://${AWS::Region}.console.aws.amazon.com/codesuite/codebuild/projects/${AWS::StackName}-build-data-layer/?region=${AWS::Region}
+
+    
