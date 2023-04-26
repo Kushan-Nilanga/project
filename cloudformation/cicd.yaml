@@ -312,7 +312,7 @@ Resources:
           - Name: CF_TEMPLATE_FILE
             Value: ./cloudformation/compute.yml
           - Name: CF_PARAMETERS
-            Value: !Sub WorkerInstanceType=t2.micro VpcID=vpc-07c7befa491f75bc9 SubnetIds=subnet-058cecf59f1fa9ac8,subnet-05583922790e54aff,subnet-0eddc9bc676c2c028
+            Value: !Sub WorkerInstanceType=t2.micro VpcId=vpc-07c7befa491f75bc9 SubnetIds=subnet-058cecf59f1fa9ac8,subnet-05583922790e54aff,subnet-0eddc9bc676c2c028
           - Name: AWS_ACCOUNT_ID
             Value: !Ref AWS::AccountId
           - Name: AWS_REGION
