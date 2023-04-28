@@ -142,6 +142,23 @@ Resources:
                 - Name: BuildOutputInfraComputeLayer
               RunOrder: 1
 
+        # ==== APP DEPLOY PHASE ====
+        - Name: DeployApp
+          Actions:
+            - Name: BuildProjectDeployApp
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref BuildProjectDeployApp
+              InputArtifacts:
+                - Name: SourceOutput
+              OutputArtifacts:
+                - Name: BuildOutputDeployApp
+              RunOrder: 1
+
   # ======== SERVICE BUILD PROJECTS ========
   # this is the codebuild project for auth-service
   BuildProjectAuthService:
@@ -325,10 +342,10 @@ Resources:
 
   # ======== INFRA DEPLOY PROJECTS ========
   # this will deploy the application in the compute layer
-  BuildProjectDeployApplications:
+  BuildProjectDeployApp:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: !Sub ${AWS::StackName}-deploy-applications
+      Name: !Sub ${AWS::StackName}-deploy-app
       Artifacts:
         Type: CODEPIPELINE
       Environment:
