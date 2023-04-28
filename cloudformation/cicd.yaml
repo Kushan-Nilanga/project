@@ -323,6 +323,27 @@ Resources:
         BuildSpec: ./cloudformation/buildspec.yml
       TimeoutInMinutes: 5
 
+  # ======== INFRA DEPLOY PROJECTS ========
+  # this will deploy the application in the compute layer
+  BuildProjectDeployApplications:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub ${AWS::StackName}-deploy-applications
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/docker:18.09.0
+        Type: LINUX_CONTAINER
+        EnvironmentVariables:
+          - Name: CF_STACK_NAME
+            Value: !Sub ${AWS::StackName}-compute-layer
+      ServiceRole: !GetAtt BuildRole.Arn
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: ./deployspec.yml
+      TimeoutInMinutes: 5
+
   # ======== IAM ROLES ========
   # this is the role that the codebuild project will assume
   BuildRole:
