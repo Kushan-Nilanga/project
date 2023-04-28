@@ -389,6 +389,10 @@ Resources:
                 Action:
                   - ec2:*
                 Resource: "*"
+              - Effect: Allow
+                Action:
+                  - iam:CreateRole
+                Resource: "*"
 
   # this is the role that the pipeline will assume
   PipelineRole:
