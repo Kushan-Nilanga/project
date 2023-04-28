@@ -4,5 +4,6 @@ WORKDIR /app
 COPY /logs-service/package*.json .
 COPY ./logs-service .
 RUN npm install --verbose --force
+RUN npm test
 EXPOSE 3000
 CMD ["npm", "start"]

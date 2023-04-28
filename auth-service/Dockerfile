@@ -4,5 +4,6 @@ WORKDIR /app
 COPY /auth-service/package*.json .
 COPY ./auth-service .
 RUN npm install --verbose --force
+RUN npm test
 EXPOSE 3000
 CMD ["npm", "start"]
