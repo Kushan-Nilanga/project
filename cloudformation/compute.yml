@@ -13,36 +13,36 @@ Parameters:
     Description: "List of subnet IDs in different AZs to deploy the EKS cluster into"
 
 Resources:
-  # # creates eks cluster
-  # MyCluster:
-  #   Type: AWS::EKS::Cluster
-  #   Properties:
-  #     Name: !Sub ${AWS::StackName}-cluster
-  #     Version: "1.26"
-  #     RoleArn: !GetAtt MyClusterRole.Arn
-  #     ResourcesVpcConfig:
-  #       SecurityGroupIds:
-  #         - !GetAtt MyClusterSecurityGroup.GroupId
-  #       SubnetIds: !Ref SubnetIds
-  #     Tags:
-  #       - Key: Name
-  #         Value: !Sub ${AWS::StackName}-cluster
+  # creates eks cluster
+  MyCluster:
+    Type: AWS::EKS::Cluster
+    Properties:
+      Name: !Sub ${AWS::StackName}-cluster
+      Version: "1.26"
+      RoleArn: !GetAtt MyClusterRole.Arn
+      ResourcesVpcConfig:
+        SecurityGroupIds:
+          - !GetAtt MyClusterSecurityGroup.GroupId
+        SubnetIds: !Ref SubnetIds
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-cluster
 
-  # # creates node group for eks cluster
-  # MyNodeGroup:
-  #   Type: AWS::EKS::Nodegroup
-  #   Properties:
-  #     ClusterName: !Ref MyCluster
-  #     NodeRole: !GetAtt MyNodeRole.Arn
-  #     Subnets: !Ref SubnetIds
-  #     InstanceTypes:
-  #       - !Ref WorkerInstanceType
-  #     ScalingConfig:
-  #       DesiredSize: 1
-  #       MaxSize: 2
-  #       MinSize: 1
-  #     AmiType: AL2_x86_64
-  
+  # creates node group for eks cluster
+  MyNodeGroup:
+    Type: AWS::EKS::Nodegroup
+    Properties:
+      ClusterName: !Ref MyCluster
+      NodeRole: !GetAtt MyNodeRole.Arn
+      Subnets: !Ref SubnetIds
+      InstanceTypes:
+        - !Ref WorkerInstanceType
+      ScalingConfig:
+        DesiredSize: 1
+        MaxSize: 2
+        MinSize: 1
+      AmiType: AL2_x86_64
+
   # creates security group for eks cluster
   MyClusterSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -99,4 +99,3 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${AWS::StackName}-node-role
-
