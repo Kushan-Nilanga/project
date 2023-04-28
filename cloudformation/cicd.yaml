@@ -392,6 +392,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - iam:CreateRole
+                  - iam:DetachRolePolicy
                 Resource: "*"
 
   # this is the role that the pipeline will assume
