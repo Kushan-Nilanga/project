@@ -6,9 +6,14 @@ const app = express();
 app.use(bodyParser.json());
 
 // Initialize the Cognito Identity Provider
-const cognito = new AWS.CognitoIdentityServiceProvider({ region: "us-east-1" });
+const cognito = new AWS.CognitoIdentityServiceProvider({ region: "ap-southeast-2" });
 
 // Route for sign-up
+/**
+ * 1. Create the user in Cognito
+ * @param req {email, password}
+ * @param res 200
+ */
 app.post("/api/sign-up", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -31,6 +36,11 @@ app.post("/api/sign-up", async (req, res) => {
 });
 
 // Route for verification
+/**
+ * 1. Confirm the user's email address in Cognito
+ * @param req {email, code}
+ * @param res 200
+ */
 app.post("/api/verify", async (req, res) => {
   try {
     const { email, code } = req.body;
@@ -52,6 +62,11 @@ app.post("/api/verify", async (req, res) => {
 });
 
 // Route for sign-in
+/**
+ * 1. Authenticate the user in Cognito
+ * @param req {email, password}
+ * @param res {token}
+ */
 app.post("/api/sign-in", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -59,7 +74,7 @@ app.post("/api/sign-in", async (req, res) => {
     // Authenticate the user in Cognito
     const result = await cognito
       .adminInitiateAuth({
-        AuthFlow: "ADMIN_NO_SRP_AUTH",
+        AuthFlow: "USER_PASSWORD_AUTH",
         ClientId: process.env.COGNITO_CLIENT_ID,
         UserPoolId: process.env.COGNITO_USER_POOL_ID,
         AuthParameters: {
@@ -69,7 +84,7 @@ app.post("/api/sign-in", async (req, res) => {
       })
       .promise();
 
-    res.json({ token: result.AuthenticationResult.IdToken });
+    res.send({ token: result.AuthenticationResult.IdToken });
   } catch (error) {
     console.error(error);
     res.sendStatus(500);
@@ -81,13 +96,13 @@ app.get("/", (req, res) => {
 });
 
 app.listen(3000, () => {
-  // // check if the environment variables are set
-  // if (!process.env.COGNITO_CLIENT_ID) {
-  //   throw new Error("COGNITO_CLIENT_ID is not set");
-  // }
-  // if (!process.env.COGNITO_USER_POOL_ID) {
-  //   throw new Error("COGNITO_USER_POOL_ID is not set");
-  // }
+  // check if the environment variables are set
+  if (!process.env.COGNITO_CLIENT_ID) {
+    throw new Error("COGNITO_CLIENT_ID is not set");
+  }
+  if (!process.env.COGNITO_USER_POOL_ID) {
+    throw new Error("COGNITO_USER_POOL_ID is not set");
+  }
 
   console.log("Auth service listening on port 3000");
 });

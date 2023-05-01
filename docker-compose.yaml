@@ -7,6 +7,10 @@ services:
       dockerfile: ./auth-service/Dockerfile
     ports:
       - 3000:3000
+    environment:
+      - COGNITO_CLIENT_ID=41i6hnruc402hpn9ffihn0nrn2
+      - COGNITO_USER_POOL_ID=ap-southeast-2_5mUCnh2Fg
+
 
   bff-service:
     build: 
