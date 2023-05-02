@@ -1,188 +1,153 @@
 let express = require("express");
+let mongoose = require("mongoose");
+let mongo_uri = process.env.MONGO_URI;
+mongoose.connect(mongo_uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 let app = express();
+app.use(express.json());
 
-app.listen(3000, function () {
+let Note = mongoose.model("Note", {
+  user_id: String,
+  title: String,
+  body: String,
+  created_at: { type: Date, default: Date.now },
+  updated_at: { type: Date, default: Date.now },
+});
+
+app.listen(80, async () => {
   console.log("Notes service listening on port 3000!");
 });
 
-// response body structure
-// {
-//   message: "Hello World from Notes Service!",
-//   notes: [
-//     {
-//       id: 1,
-//       title: "Note 1",
-//       body: "This is the body of note 1",
-//       created_at: "2018-01-01T12:00:00Z",
-//       updated_at: "2018-01-01T12:00:00Z",
-//     },
-//   ],
-// };
-
 /******************** GET / **********************/
-app.get("/", function (req, res) {
-  resp_body = handleGet();
-  res.send(resp_body);
+app.get("/", async (req, res) => {
+  res.send("Hello World from Notes Service!");
 });
 
-/** handle GET_
- * @returns {object} response_body
- */
-function handleGet() {
-  response_body = {
-    message: "Hello World from Notes Service!",
-    notes: [],
-  };
+/******************** POST /api/note/:user_id *************/
+app.post("/api/note/:user_id", async (req, res) => {
+  try {
+    const { user_id } = req.params;
+    const { title, body } = req.body;
+    const note = new Note({
+      user_id,
+      title,
+      body,
+    });
+    await note.save();
 
-  return response_body;
-}
-
-/******************** GET /notes/:user_id **********************/
-app.get("/notes/:user_id", function (req, res) {
-  resp_body = handleGetNotesUserId(req.params.user_id);
-  res.send(resp_body);
+    res.send({
+      message: "Note created successfully!",
+      note,
+    });
+  } catch (error) {
+    res.status(500).send({
+      message: "Error creating note!",
+      error,
+    });
+  }
 });
 
-/** handle GET /notes/:user_id
- * @param {string} user_id
- * @returns {object} response_body
- * @returns {string} response_body.message
- * @returns {object[]} response_body.notes
- * @returns {string} response_body.notes[].id
- * @returns {string} response_body.notes[].title
- * @returns {string} response_body.notes[].body
- * @returns {string} response_body.notes[].created_at
- * @returns {string} response_body.notes[].updated_at
- */
-function handleGetNotesUserId(user_id) {
-  response_body = {
-    message: "success",
-    notes: [],
-  };
+/******************** PUT /api/note/:user_id/:id **********/
+app.put("/api/note/:user_id/:id", async (req, res) => {
+  try {
+    const { user_id } = req.params;
+    const { id } = req.params;
+    const { title, body } = req.body;
 
-  return response_body;
-}
+    // update the note that matches the id
+    const note = await Note.findByIdAndUpdate(
+      id,
+      {
+        user_id,
+        title,
+        body,
+        updated_at: Date.now(),
+      },
+      { new: true }
+    );
 
-/******************** GET /notes/:user_id/:note_id **********************/
-app.get("/notes/:user_id/:note_id", function (req, res) {
-  resp_body = handleGetNotesUserIdNoteId(
-    req.params.user_id,
-    req.params.note_id
-  );
-  res.send(resp_body);
+    res.send({
+      message: "Note updated successfully!",
+      note,
+    });
+  } catch (error) {
+    res.status(500).send({
+      message: "Error updating note!",
+      error,
+    });
+  }
 });
 
-/** handle GET /notes/:user_id/:note_id
- * @param {string} user_id
- * @param {string} note_id
- * @returns {object} response_body
- * @returns {string} response_body.message
- * @returns {object[]} response_body.notes
- * @returns {string} response_body.notes[].id
- * @returns {string} response_body.notes[].title
- * @returns {string} response_body.notes[].body
- * @returns {string} response_body.notes[].created_at
- * @returns {string} response_body.notes[].updated_at
- */
-function handleGetNotesUserIdNoteId(user_id, note_id) {
-  response_body = {
-    message: "success",
-    notes: [],
-  };
+/******************** DELETE /api/note/:user_id/:id *******/
+app.delete("/api/note/:user_id/:id", async (req, res) => {
+  try {
+    const { user_id, id } = req.params;
 
-  return response_body;
-}
+    // delete the note that matches the id
+    const note = await Note.findByIdAndDelete(id);
 
-/******************** POST /notes/:user_id **********************/
-app.post("/notes/:user_id", function (req, res) {
-  resp_body = handlePostNotesUserId(req.params.user_id, req.body);
-  res.send(resp_body);
+    res.send({
+      message: "Note deleted successfully!",
+      note,
+    });
+  } catch (error) {
+    res.status(500).send({
+      message: "Error deleting note!",
+      error,
+    });
+  }
 });
 
-/** handle POST /notes/:user_id
- * @param {string} user_id
- * @param {object} body
- * @param {string} body.title
- * @param {string} body.body
- * @returns {object} response_body
- * @returns {string} response_body.message
- * @returns {object[]} response_body.notes
- * @returns {string} response_body.notes[].id
- * @returns {string} response_body.notes[].title
- * @returns {string} response_body.notes[].body
- * @returns {string} response_body.notes[].created_at
- * @returns {string} response_body.notes[].updated_at
- */
-function handlePostNotesUserId(user_id, body) {
-  response_body = {
-    message: "success",
-    notes: [],
-  };
+/******************** GET /api/note/:user_id **************/
+app.get("/api/note/:user_id", async (req, res) => {
+  try {
+    const { user_id } = req.params;
 
-  return response_body;
-}
+    // get all notes that match the user_id
+    const notes = await Note.find({ user_id });
 
-/******************** PUT /notes/:user_id/:note_id **********************/
-app.put("/notes/:user_id/:note_id", function (req, res) {
-  resp_body = handlePutNotesUserIdNoteId(
-    req.params.user_id,
-    req.params.note_id,
-    req.body
-  );
-  res.send(resp_body);
+    res.send({
+      message: "Notes retrieved successfully!",
+      notes,
+    });
+  } catch (error) {
+    res.status(500).send({
+      message: "Error retrieving notes!",
+      error,
+    });
+  }
 });
 
-/** handle PUT /notes/:user_id/:note_id
- * @param {string} user_id
- * @param {string} note_id
- * @param {object} body
- * @param {string} body.title
- * @param {string} body.body
- * @returns {object} response_body
- * @returns {string} response_body.message
- * @returns {object[]} response_body.notes
- * @returns {string} response_body.notes[].id
- * @returns {string} response_body.notes[].title
- * @returns {string} response_body.notes[].body
- * @returns {string} response_body.notes[].created_at
- * @returns {string} response_body.notes[].updated_at
- */
-function handlePutNotesUserIdNoteId(user_id, note_id, body) {
-  response_body = {
-    message: "success",
-    notes: [],
-  };
+/******************** GET /api/note/:user_id/:id **********/
+app.get("/api/note/:user_id/:id", async (req, res) => {
+  try {
+    const { user_id, id } = req.params;
 
-  return response_body;
-}
+    // get the note that matches the id
+    const note = await Note.findById(id);
 
-/******************** DELETE /notes/:user_id/:note_id **********************/
-app.delete("/notes/:user_id/:note_id", function (req, res) {
-  resp_body = handleDeleteNotesUserIdNoteId(
-    req.params.user_id,
-    req.params.note_id
-  );
-  res.send(resp_body);
+    res.send({
+      message: "Note retrieved successfully!",
+      note,
+    });
+  } catch (error) {
+    res.status(500).send({
+      message: "Error retrieving note!",
+      error,
+    });
+  }
 });
 
-/** handle DELETE /notes/:user_id/:note_id
- * @param {string} user_id
- * @param {string} note_id
- * @returns {object} response_body
- * @returns {string} response_body.message
- * @returns {object[]} response_body.notes
- * @returns {string} response_body.notes[].id
- * @returns {string} response_body.notes[].title
- * @returns {string} response_body.notes[].body
- * @returns {string} response_body.notes[].created_at
- * @returns {string} response_body.notes[].updated_at
+/**
+ * Summary
+ *
+ * POST /api/note/:user_id        : { title, body }
+ * PUT /api/note/:user_id/:id     : { title, body }
+ * DELETE /api/note/:user_id/:id  : {}
+ * GET /api/note/:user_id         : {}
+ * GET /api/note/:user_id/:id     : {}
+ * 
  */
-function handleDeleteNotesUserIdNoteId(user_id, note_id) {
-  response_body = {
-    message: "success",
-    notes: [],
-  };
-
-  return response_body;
-}

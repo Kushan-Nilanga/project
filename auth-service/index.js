@@ -6,7 +6,9 @@ const app = express();
 app.use(bodyParser.json());
 
 // Initialize the Cognito Identity Provider
-const cognito = new AWS.CognitoIdentityServiceProvider({ region: "ap-southeast-2" });
+const cognito = new AWS.CognitoIdentityServiceProvider({
+  region: "ap-southeast-2",
+});
 
 // Route for sign-up
 /**
@@ -71,12 +73,11 @@ app.post("/api/sign-in", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Authenticate the user in Cognito
+    // Authenticate the user in Cognito for 1 hour
     const result = await cognito
-      .adminInitiateAuth({
+      .initiateAuth({
         AuthFlow: "USER_PASSWORD_AUTH",
         ClientId: process.env.COGNITO_CLIENT_ID,
-        UserPoolId: process.env.COGNITO_USER_POOL_ID,
         AuthParameters: {
           USERNAME: email,
           PASSWORD: password,
@@ -84,7 +85,43 @@ app.post("/api/sign-in", async (req, res) => {
       })
       .promise();
 
-    res.send({ token: result.AuthenticationResult.IdToken });
+    res.send({ token: result.AuthenticationResult.AccessToken });
+  } catch (error) {
+    console.error(error);
+
+    if (error.code === "NotAuthorizedException") {
+      res.setStatus(401).send("Authentication failed");
+    } else {
+      res.sendStatus(500);
+    }
+  }
+});
+
+// Route for authentication
+/**
+ * 1. Authenticate the user in Cognito
+ * @param req {token}
+ * @param res 200
+ *
+ */
+app.post("/api/authenticate", async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    // Authenticate the user in Cognito
+    const result = await cognito
+      .getUser({
+        AccessToken: token,
+      })
+      .promise();
+
+    // send user id and email
+    res.send({
+      id: result.Username,
+      email: result.UserAttributes.find(
+        (attribute) => attribute.Name === "email"
+      ).Value,
+    });
   } catch (error) {
     console.error(error);
     res.sendStatus(500);
@@ -95,7 +132,7 @@ app.get("/", (req, res) => {
   res.send("Hello World from Auth Service!");
 });
 
-app.listen(3000, () => {
+app.listen(80, () => {
   // check if the environment variables are set
   if (!process.env.COGNITO_CLIENT_ID) {
     throw new Error("COGNITO_CLIENT_ID is not set");

@@ -5,3 +5,4 @@ makefile
 .DS_Store
 data/
 .DONT_COMMIT
+mongo-data/
