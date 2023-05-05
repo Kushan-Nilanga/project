@@ -1,0 +1,107 @@
+@startuml pipeline
+top to bottom direction
+' skinparam linetype ortho
+
+title "CI/CD Pipeline Diagram"
+
+rectangle "Development Environement" as dev {
+    actor Developer
+    (Master CICD \nCloudformation \nTemplate) as master
+    (Application Code) as appcode
+}
+
+rectangle Github {
+    (Github Repository) as github
+    appcode --> github: 2.1
+}
+
+rectangle "AWS CodePipeline" as codepipeline {
+    rectangle "Source" as source{
+        (Source Action) as src
+    }
+
+    rectangle "BuildCode" as buildCode {
+        (BuildAuthService) as buildAuth
+        (BuildNotesService) as buildNotes
+        (BuildBFFService) as buildBFF
+        (BuildLogsService) as buildLogs
+
+        github --> src: 2.2
+
+        src .-> buildAuth: 2.3
+        src .-> buildNotes: 2.3
+        src .-> buildBFF: 2.3
+        src .-> buildLogs: 2.3
+    }
+
+    rectangle "BuildInfra" as buildInfra {
+        (BuildProjectDataLayer) as dataLayer
+        (BuildProjectComputeLayer) as computeLayer
+
+        src .-> dataLayer: 2.5
+        src .-> computeLayer: 2.5
+    }
+}
+
+rectangle "AWS CloudFormation" as cloudformation {
+    (Data Layer CF Template) as cft_dataLayer
+    (Compute Layer CF Template) as cft_computeLayer
+    (Master CICD Template) as cft_master
+
+    dataLayer .-> cft_dataLayer: 2.6
+    computeLayer .-> cft_computeLayer: 2.6
+
+    master --> cft_master: 1.1
+    cft_master .-> codepipeline: 1.2
+}
+
+
+rectangle "AWS Cognito" as cognito {
+    (Cognito User Pool) as userPool
+    (Cognito User Pool Client) as userPoolClient
+
+    cft_dataLayer .-> cognito: 2.7
+    cft_computeLayer .-> eks: 2.7
+}
+
+rectangle "AWS Elastic Container Registry" as ecr {
+    (Auth Repo) as authRepo
+    (Notes Repo) as notesRepo
+    (BFF Repo) as bffRepo
+    (Logs Repo) as logsRepo
+    (Mongo Repo) as mongoRepo
+
+    buildAuth .-> authRepo: 2.4
+    buildNotes .-> notesRepo: 2.4
+    buildBFF .-> bffRepo: 2.4
+    buildLogs .-> logsRepo: 2.4
+    Developer --> mongoRepo: 2.4
+}
+
+rectangle "AWS Elastic Kubernetes Service" as eks {
+    (Auth Service) as authService
+    (Notes Service) as notesService
+    (BFF Service) as bffService
+    (Logs Service) as logsService
+    (Mongo Service) as mongoService
+
+    notesRepo .-> notesService: 2.8
+    authRepo .-> authService: 2.8
+    bffRepo .-> bffService: 2.8
+    logsRepo .-> logsService: 2.8
+    mongoRepo .-> mongoService: 2.8
+
+    bffService -[#009900]-> authService: HTTP
+    bffService -[#009900]-> notesService: HTTP
+    notesService -[#009900]-> mongoService: HTTP
+    bffService -[#009900]-> logsService: HTTP
+    authService -[#009900]-> userPool: HTTP
+    notesService -[#009900]-> logsService: HTTP
+    authService -[#009900]-> logsService: HTTP
+}
+
+user -[#009900]-> bffService: HTTP
+
+@enduml
+
+

@@ -1,0 +1,35 @@
+@startuml
+left to right direction
+
+actor user
+
+rectangle "AWS Cognito" as cognito {
+    (User Pool)
+    (User Client)
+}
+
+rectangle "AWS CloudWatch" as cwlogs {
+    eks --> cwlogs: http
+    (Logs)
+    (Metrics)
+}
+
+rectangle "AWS EKS" as eks {
+    (BFF Service) as bff
+    (Notes Service) as notes
+    (Auth Service) as auth
+    (Logs Service) as logs
+    (Mongo DB) as mongo
+}
+
+user --> bff: http
+bff --> notes: http
+bff --> auth: http
+bff --> logs: http
+notes --> logs: http
+auth --> logs: http
+notes --> mongo: http
+auth --> cognito: http
+logs --> cwlogs: http
+
+@enduml

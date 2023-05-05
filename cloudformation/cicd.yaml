@@ -431,6 +431,7 @@ Resources:
                 Action:
                   - iam:CreateRole
                   - iam:DetachRolePolicy
+                  - iam:DeleteRole
                 Resource: "*"
 
   # this is the role that the pipeline will assume
