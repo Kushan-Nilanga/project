@@ -23,6 +23,11 @@ spec:
         volumeMounts:
         - name: mongo-data
           mountPath: /data/db
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "250m"
+
       volumes:
       - name: mongo-data
         emptyDir: {}
@@ -56,6 +61,10 @@ spec:
         volumeMounts:
         - name: mongo-data
           mountPath: /data/db
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "250m"
       volumes:
       - name: mongo-data
         emptyDir: {}
@@ -88,6 +97,7 @@ spec:
           value: "password"
         - name: ME_CONFIG_MONGODB_SERVER
           value: "mongo"
-      restartPolicy: Always
-      dependsOn:
-      - name: mongo
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "250m"

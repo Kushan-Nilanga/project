@@ -355,6 +355,12 @@ Resources:
         EnvironmentVariables:
           - Name: CF_STACK_NAME
             Value: !Sub ${AWS::StackName}-compute-layer
+          - Name: AWS_ACCOUNT_ID
+            Value: !Ref AWS::AccountId
+          - Name: AWS_REGION
+            Value: !Ref AWS::Region
+          - Name: STACK_NAME
+            Value: notes-stack-compute-cluster
       ServiceRole: !GetAtt BuildRole.Arn
       Source:
         Type: CODEPIPELINE

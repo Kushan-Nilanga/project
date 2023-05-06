@@ -1,11 +1,36 @@
 version: 0.2
 
 phases:
+  pre-build:
+    runtime-versions:
+      docker: 18
+      kubectl: 1.26
+    commands:
+      - aws eks --region $AWS_REGION update-kubeconfig --name $STACK_NAME
+      - kubectl config use-context arn:aws:eks:$AWS_REGION:$AWS_ACCOUNT_ID:cluster/$STACK_NAME
+      - kubectl config current-context
+
   build:
     runtime-versions:
       docker: 18
       kubectl: 1.26
     commands:
-      - echo Deploying Notes Service
-      - kubectl apply -f ./notes-service/deployment.yml
-      - kubectl apply -f ./notes-service/service.yml
+      - echo Deploying Notes Service... 
+      - kubectl apply -f notes-service/deployment.yml
+      - kubectl apply -f notes-service/service.yml
+
+      - echo Deploying Auth Service...
+      - kubectl apply -f auth-service/deployment.yml
+      - kubectl apply -f auth-service/service.yml
+
+      - echo Deploying BFF Service...
+      - kubectl apply -f bff-service/deployment.yml
+      - kubectl apply -f bff-service/service.yml
+
+      - echo Deploying Logs Service...
+      - kubectl apply -f logs-service/deployment.yml
+      - kubectl apply -f logs-service/service.yml
+
+      - echo Deployments completed on `date`
+
+
