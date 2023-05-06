@@ -1,11 +1,10 @@
 version: 0.2
 
 phases:
-  install:
+  build:
     runtime-versions:
       docker: 18
       kubectl: 1.26
-  post_build:
     commands:
       - echo Deploying Notes Service
       - kubectl apply -f ./notes-service/deployment.yml
