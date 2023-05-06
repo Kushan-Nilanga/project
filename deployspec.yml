@@ -4,6 +4,7 @@ phases:
   install:
     runtime-versions:
       docker: 18
+      kubectl: 1.26
   post_build:
     commands:
       - echo Deploying Notes Service
