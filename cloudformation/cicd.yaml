@@ -111,9 +111,6 @@ Resources:
                 - Name: BuildOutputLogsService
               RunOrder: 1
 
-        # ==== INFRA BUILD PHASE ====
-        - Name: BuildInfra
-          Actions:
             - Name: BuildProjectDataLayer
               ActionTypeId:
                 Category: Build
