@@ -13,7 +13,7 @@ phases:
   build:
     commands:
       - aws eks --region $AWS_REGION update-kubeconfig --name $STACK_NAME
-      - kubectl config use-context arn:aws:eks:$AWS_REGION:$AWS_ACCOUNT_ID:cluster/$STACK_NAME
+      - kubectl config use-context arn:aws:eks:$(AWS_REGION):$(AWS_ACCOUNT_ID):cluster/$(STACK_NAME)
       - kubectl config current-context
       - echo Deploying Notes Service... 
       - kubectl apply -f notes-service/deployment.yml
