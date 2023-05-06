@@ -14,5 +14,5 @@ phases:
   post_build:
     commands:
       - echo Deploying Notes Service
-      - kubectl apply -f ./notes-service/deployment.yaml
-      - kubectl apply -f ./notes-service/service.yaml
+      - kubectl apply -f ./notes-service/deployment.yml
+      - kubectl apply -f ./notes-service/service.yml
