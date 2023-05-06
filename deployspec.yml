@@ -1,6 +1,15 @@
 version: 0.2
 
 phases:
-  pre_build:
+  install:
     commands:
-      - echo Hello
+      - echo Installing kubectl and configuring AWS CLI
+      - curl -LO "https://dl.k8s.io/release/$(curl -Ls https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+      - aws configure set region ap-southeast-2
+      - aws eks update-kubeconfig --name notes-stack-cicd-compute-layer-cluster
+  post_build:
+    commands:
+      - echo Deploying Notes Service
+      - kubectl apply -f ./notes-service/deployment.yaml
+      - kubectl apply -f ./notes-service/service.yaml
