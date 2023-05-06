@@ -128,19 +128,19 @@ Resources:
                 - Name: BuildOutputInfraDataLayer
               RunOrder: 1
 
-            - Name: BuildProjectComputeLayer
-              ActionTypeId:
-                Category: Build
-                Owner: AWS
-                Version: 1
-                Provider: CodeBuild
-              Configuration:
-                ProjectName: !Ref BuildProjectComputeLayer
-              InputArtifacts:
-                - Name: SourceOutput
-              OutputArtifacts:
-                - Name: BuildOutputInfraComputeLayer
-              RunOrder: 1
+            # - Name: BuildProjectComputeLayer
+            #   ActionTypeId:
+            #     Category: Build
+            #     Owner: AWS
+            #     Version: 1
+            #     Provider: CodeBuild
+            #   Configuration:
+            #     ProjectName: !Ref BuildProjectComputeLayer
+            #   InputArtifacts:
+            #     - Name: SourceOutput
+            #   OutputArtifacts:
+            #     - Name: BuildOutputInfraComputeLayer
+            #   RunOrder: 1
 
         # ==== APP DEPLOY PHASE ====
         - Name: DeployApp
@@ -313,32 +313,32 @@ Resources:
         BuildSpec: ./cloudformation/buildspec.yml
       TimeoutInMinutes: 5
 
-  BuildProjectComputeLayer:
-    Type: AWS::CodeBuild::Project
-    Properties:
-      Name: !Sub ${AWS::StackName}-build-compute-layer
-      Artifacts:
-        Type: CODEPIPELINE
-      Environment:
-        ComputeType: BUILD_GENERAL1_SMALL
-        Image: aws/codebuild/docker:18.09.0
-        Type: LINUX_CONTAINER
-        EnvironmentVariables:
-          - Name: CF_STACK_NAME
-            Value: !Sub ${AWS::StackName}-compute-layer
-          - Name: CF_TEMPLATE_FILE
-            Value: ./cloudformation/compute.yml
-          - Name: CF_PARAMETERS
-            Value: !Sub WorkerInstanceType=t2.micro VpcId=vpc-07c7befa491f75bc9 SubnetIds=subnet-058cecf59f1fa9ac8,subnet-05583922790e54aff,subnet-0eddc9bc676c2c028
-          - Name: AWS_ACCOUNT_ID
-            Value: !Ref AWS::AccountId
-          - Name: AWS_REGION
-            Value: !Ref AWS::Region
-      ServiceRole: !GetAtt BuildRole.Arn
-      Source:
-        Type: CODEPIPELINE
-        BuildSpec: ./cloudformation/buildspec.yml
-      TimeoutInMinutes: 5
+  # BuildProjectComputeLayer:
+  #   Type: AWS::CodeBuild::Project
+  #   Properties:
+  #     Name: !Sub ${AWS::StackName}-build-compute-layer
+  #     Artifacts:
+  #       Type: CODEPIPELINE
+  #     Environment:
+  #       ComputeType: BUILD_GENERAL1_SMALL
+  #       Image: aws/codebuild/docker:18.09.0
+  #       Type: LINUX_CONTAINER
+  #       EnvironmentVariables:
+  #         - Name: CF_STACK_NAME
+  #           Value: !Sub ${AWS::StackName}-compute-layer
+  #         - Name: CF_TEMPLATE_FILE
+  #           Value: ./cloudformation/compute.yml
+  #         - Name: CF_PARAMETERS
+  #           Value: !Sub WorkerInstanceType=t2.micro VpcId=vpc-07c7befa491f75bc9 SubnetIds=subnet-058cecf59f1fa9ac8,subnet-05583922790e54aff,subnet-0eddc9bc676c2c028
+  #         - Name: AWS_ACCOUNT_ID
+  #           Value: !Ref AWS::AccountId
+  #         - Name: AWS_REGION
+  #           Value: !Ref AWS::Region
+  #     ServiceRole: !GetAtt BuildRole.Arn
+  #     Source:
+  #       Type: CODEPIPELINE
+  #       BuildSpec: ./cloudformation/buildspec.yml
+  #     TimeoutInMinutes: 5
 
   # ======== INFRA DEPLOY PROJECTS ========
   # this will deploy the application in the compute layer
