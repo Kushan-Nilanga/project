@@ -1,10 +1,24 @@
 let express = require("express");
 let mongoose = require("mongoose");
-let mongo_uri = process.env.MONGO_URI;
-mongoose.connect(mongo_uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+let mongo_user_base64_decoded = Buffer.from(
+  process.env.MONGO_INITDB_ROOT_USERNAME,
+  "base64"
+).toString("utf8");
+let mongo_pass_base64_decoded = Buffer.from(
+  process.env.MONGO_INITDB_ROOT_PASSWORD,
+  "base64"
+).toString("utf8");
+
+// - name: MONGO_URI
+// value: "mongodb://$(MONGO_INITDB_ROOT_USERNAME):$(MONGO_INITDB_ROOT_PASSWORD)@mongo:27017/notes?authSource=admin"
+ßßß
+mongoose.connect(
+  $`mongodb://${mongo_user_base64_decoded}:${mongo_pass_base64_decoded}@mongo:27017/notes?authSource=admin`,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }
+);
 
 let app = express();
 app.use(express.json());
@@ -149,5 +163,5 @@ app.get("/api/note/:user_id/:id", async (req, res) => {
  * DELETE /api/note/:user_id/:id  : {}
  * GET /api/note/:user_id         : {}
  * GET /api/note/:user_id/:id     : {}
- * 
+ *
  */
