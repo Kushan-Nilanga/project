@@ -12,7 +12,7 @@ let mongo_pass_base64_decoded = Buffer.from(
 // - name: MONGO_URI
 // value: "mongodb://$(MONGO_INITDB_ROOT_USERNAME):$(MONGO_INITDB_ROOT_PASSWORD)@mongo:27017/notes?authSource=admin"
 mongoose.connect(
-  $`mongodb://${mongo_user_base64_decoded}:${mongo_pass_base64_decoded}@mongo:27017/notes?authSource=admin`,
+  `mongodb://${mongo_user_base64_decoded}:${mongo_pass_base64_decoded}@mongo:27017/notes?authSource=admin`,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
