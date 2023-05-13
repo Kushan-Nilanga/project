@@ -28,6 +28,8 @@ spec:
                 secretKeyRef:
                   name: mongo-secret
                   key: MONGO_INITDB_ROOT_PASSWORD
+            - name: MONGO_SERVER
+              value: "mongo"
           resources:
             limits:
               memory: "128Mi"

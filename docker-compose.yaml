@@ -2,7 +2,7 @@
 version: '3'
 services:
   auth-service:
-    build: 
+    build:
       context: ./
       dockerfile: ./auth-service/Dockerfile
     ports:
@@ -12,20 +12,23 @@ services:
       - COGNITO_USER_POOL_ID=ap-southeast-2_5mUCnh2Fg
 
   bff-service:
-    build: 
+    build:
       context: ./
       dockerfile: ./bff-service/Dockerfile
     ports:
       - 3001:80
 
   notes-service:
-    build: 
+    build:
       context: ./
       dockerfile: ./notes-service/Dockerfile
     ports:
       - 3002:80
     environment:
-     - MONGO_URI=mongodb://admin:password@mongo:27017/notes?authSource=admin
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_SERVER=mongo
+    restart: always
 
   mongo:
     # image: 329045634983.dkr.ecr.ap-southeast-2.amazonaws.com/mongo
@@ -37,6 +40,7 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=password
+    restart: always
 
   mongo-express:
     image: mongo-express
@@ -49,6 +53,3 @@ services:
     depends_on:
       - mongo
     restart: always
-    
-
-

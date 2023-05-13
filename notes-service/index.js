@@ -1,18 +1,14 @@
 let express = require("express");
 let mongoose = require("mongoose");
-let mongo_user_base64_decoded = Buffer.from(
-  process.env.MONGO_INITDB_ROOT_USERNAME,
-  "base64"
-).toString("utf8");
-let mongo_pass_base64_decoded = Buffer.from(
-  process.env.MONGO_INITDB_ROOT_PASSWORD,
-  "base64"
-).toString("utf8");
+let mongo_user = process.env.MONGO_INITDB_ROOT_USERNAME;
+let mongo_pass = process.env.MONGO_INITDB_ROOT_PASSWORD;
+let mongo_server = process.env.MONGO_SERVER;
 
-// - name: MONGO_URI
-// value: "mongodb://$(MONGO_INITDB_ROOT_USERNAME):$(MONGO_INITDB_ROOT_PASSWORD)@mongo:27017/notes?authSource=admin"
+console.log("mongo_user", mongo_user);
+console.log("mongo_pass", mongo_pass);
+
 mongoose.connect(
-  `mongodb://${mongo_user_base64_decoded}:${mongo_pass_base64_decoded}@mongo:27017/notes?authSource=admin`,
+  `mongodb://${mongo_user}:${mongo_pass}@${mongo_server}:27017/notes?authSource=admin`,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
