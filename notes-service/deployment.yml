@@ -66,13 +66,13 @@ spec:
                 secretKeyRef:
                   name: mongo-secret
                   key: MONGO_INITDB_ROOT_PASSWORD
-          volumeMounts:
-            - name: mongo-data
-              mountPath: /data/db
           resources:
             limits:
               memory: "128Mi"
               cpu: "250m"
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
       volumes:
         - name: mongo-data
           emptyDir: {}
